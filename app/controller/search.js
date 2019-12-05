@@ -44,7 +44,7 @@ class SearchController extends Controller {
    * @desc: 这是多个文件上传controller
    * @acess 允许访问
    */
-async uploads(){
+    async uploads(){
     const { ctx } = this;
     for (const file of ctx.request.files) {
       try {
@@ -105,14 +105,13 @@ async uploads(){
     // parts() 返回 promise 对象
     while ((part = await parts()) != null) {
       if (part.length) {
-       console.log(part);
+        console.log(part)
       } else {
         if (!part.filename) {
           // 这时是用户没有选择文件就点击了上传(part 是 file stream，但是 part.filename 为空)
           // 需要做出处理，例如给出错误提示消息
-          return;
+          throw new Error("没有选择文件就上传了")
         }
-
         try {
           const target=path.resolve("./app/public",`${part.filename}`);
           const writeStream=fs.createWriteStream(target);

@@ -12,9 +12,15 @@ $ open http://localhost:7001/
 $ npm start
 $ npm stop
 ```
+### 路由
+localhost:7001/fileupload 文件形式：上传单个文件
+localhost:7001/fileuploads 文件形式：上传多个文件
+localhost:7001/fileuploadStream 流的形式:上传单个文件和字段
+localhost:7001/fileloadsStream 流的形式:上传多个文件和字段
+***
 ### 插件
 `markdown-preview-enhanced`在vscode中markdown
-#易错问题解决
+# 易错问题解决
 1. csrf解决（在使用post请求接口的时候会报错）
 解决： 在config配置项里面config.default.js里面添加
 ```
