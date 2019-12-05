@@ -51,9 +51,10 @@ config.security = {
 };
 //配置支持file模式
 exports.multipart = {
-  mode: 'file',
+  mode: 'stream',
   fileExtensions:[".xlsx",".xls",".dmg"]//配置扩展名白名单
 };
+
 
   return {
     ...config,
