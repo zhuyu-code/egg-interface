@@ -42,11 +42,19 @@ config.mysql = {
   // 是否加载到 agent 上，默认关闭
   agent: false,
 }
+
+//配置csrf的跨域攻击
 config.security = {
   csrf: {
     enable: false,
   },
 };
+//配置支持file模式
+exports.multipart = {
+  mode: 'file',
+  fileExtensions:[".xlsx",".xls",".dmg"]//配置扩展名白名单
+};
+
   return {
     ...config,
     ...userConfig,

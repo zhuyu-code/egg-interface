@@ -65,6 +65,16 @@ config.cluster = {
       }
   };
 ```
+4. 配置允许file和stream的模式（在config.default.js中配置）
+```
+//配置支持file模式
+exports.multipart = {
+  mode: 'file',
+  fileExtensions:[".xlsx",".xls",".dmg"]//配置扩展名白名单
+};
+```
+5.注意文件和流的概念
+文件只能一块一块的上传，而流的形式可以指定每次上传多大的形式，更加具有性能优势
 # 参考文章
 1. [egg项目搭建](https://juejin.im/post/5bf362f0e51d4543850ff46c)
 2. [egg源码解读](https://juejin.im/post/5be92cc95188251fd925d49b)

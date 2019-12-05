@@ -19,6 +19,7 @@ class UserService extends Service {
   //查询全部的用户信息
   async findAll() {
     return await this.app.mysql.query("select * from users")
+    // this.success("该邮箱未注册")
   }
 
   //查询指定用户的信息
@@ -28,8 +29,6 @@ class UserService extends Service {
 
   //增加指定用户信息
   async add(){
-    console.log('成功')
-    console.log(this.ctx.request.body)
   const result = await this.app.mysql.insert('users', this.ctx.request.body);
   // 判断插入成功
   const insertSuccess = result.affectedRows === 1;
