@@ -4,6 +4,7 @@ const Controller = require('egg').Controller;
 const fs = require('mz/fs');
 const path=require("path");
 const sendToWormhole = require('stream-wormhole');
+var pump = require('pump')//用于处理pipe结束回调函数处理
 class SearchController extends Controller {
 
   /**
@@ -79,7 +80,7 @@ class SearchController extends Controller {
     try {
       const target=path.resolve("./app/public",`${name}`);
       const writeStream=fs.createWriteStream(target);
-      stream.pipe(writeStream);
+      await pump(stream,writeStream);
       const result=await this.service.search.upload(stream.filename,target);
       ctx.body = {
         code:200,
@@ -109,13 +110,12 @@ class SearchController extends Controller {
       } else {
         if (!part.filename) {
           // 这时是用户没有选择文件就点击了上传(part 是 file stream，但是 part.filename 为空)
-          // 需要做出处理，例如给出错误提示消息
           throw new Error("没有选择文件就上传了")
         }
         try {
           const target=path.resolve("./app/public",`${part.filename}`);
           const writeStream=fs.createWriteStream(target);
-          part.pipe(writeStream);
+          await pump(stream,writeStream);//将回调函数变成一个内容
           this.service.search.upload(part.filename,target);
           ctx.body={
             code:200,
