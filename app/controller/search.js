@@ -76,21 +76,9 @@ class SearchController extends Controller {
     const ctx = this.ctx;
     const stream = await ctx.getFileStream();
     const name = path.basename(stream.filename);
-    // 文件处理，上传到云存储等等
-    try {
-      const target=path.resolve("./app/public",`${name}`);
-      const writeStream=fs.createWriteStream(target);
-      await pump(stream,writeStream);
-      const result=await this.service.search.upload(stream.filename,target);
-      ctx.body = {
-        code:200,
-        message:stream.fields
-      };
-    } catch (err) {
-      // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
-      await sendToWormhole(stream);
-      throw err;
-    }
+    const target=path.resolve("./app/public",`${name}`);
+    const writeStream=fs.createWriteStream(target);
+    await this.service.search.makeFile(stream,writeStream,name);
    }
 
 
@@ -102,32 +90,8 @@ class SearchController extends Controller {
   async uploadsStream(){
     const ctx = this.ctx;
     const parts = ctx.multipart();
-    let part;
-    // parts() 返回 promise 对象
-    while ((part = await parts()) != null) {
-      if (part.length) {
-        console.log(part)
-      } else {
-        if (!part.filename) {
-          // 这时是用户没有选择文件就点击了上传(part 是 file stream，但是 part.filename 为空)
-          throw new Error("没有选择文件就上传了")
-        }
-        try {
-          const target=path.resolve("./app/public",`${part.filename}`);
-          const writeStream=fs.createWriteStream(target);
-          await pump(stream,writeStream);//将回调函数变成一个内容
-          this.service.search.upload(part.filename,target);
-          ctx.body={
-            code:200,
-            message:part.fieldname
-          }
-        } catch (err) {
-          // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
-          await sendToWormhole(part);
-          throw err;
-        }
-      }
-    }
+    //调用处理多文件的service的内容
+    await this.service.search.makeFiles(parts);
   }
 }
 

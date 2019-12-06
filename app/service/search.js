@@ -2,6 +2,11 @@
 
 const Service = require('egg').Service;
 
+const sendToWormhole = require('stream-wormhole');
+const path=require("path");
+const fs=require("fs");
+const pump=require("pump");
+
 class SearchService extends Service {
   async upload(name,file_path) {
     const result = await this.app.mysql.insert('file', { name: name ,file_path:file_path}); 
@@ -12,6 +17,51 @@ class SearchService extends Service {
   }else{
     return '失败';
   }
+  }
+
+  async makeFile(stream,writeStream,name){
+      // 文件和数据库处理
+      try {
+        await pump(stream,writeStream);//promise执行成功才会执行插入数据库操作。
+        const result=await this.service.search.upload(stream.filename,target);
+        this.ctx.body = {
+          code:200,
+          message:stream.fields
+        };
+      } catch (err) {
+        // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
+        await sendToWormhole(stream);
+        throw err;
+      }
+  }
+
+  async makeFiles(parts){
+        // parts() 返回 promise 对象
+        let part
+        while ((part = await parts()) != null) {
+          if (part.length) {
+            console.log(part)
+          } else {
+            if (!part.filename) {
+              // 这时是用户没有选择文件就点击了上传(part 是 file stream，但是 part.filename 为空)
+              throw new Error("没有选择文件就上传了")
+            }
+            try {
+              const target=path.resolve("./app/public",`${part.filename}`);
+              const writeStream=fs.createWriteStream(target);
+              await pump(part,writeStream);//将回调函数变成一个内容
+              this.service.search.upload(part.filename,target);
+              this.ctx.body={
+                code:200,
+                message:"插入成功"
+              }
+            } catch (err) {
+              // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
+              await sendToWormhole(part);
+              throw err;
+            }
+          }
+        }
   }
 }
 
