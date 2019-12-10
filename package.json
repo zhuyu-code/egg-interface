@@ -8,9 +8,11 @@
   },
   "dependencies": {
     "egg": "^2.25.0",
+    "egg-cors": "^2.2.3",
     "egg-mysql": "^3.0.0",
     "egg-scripts": "^2.11.0",
-    "pump": "^3.0.0"
+    "pump": "^3.0.0",
+    "source-map": "^0.7.3"
   },
   "devDependencies": {
     "autod": "^3.0.1",

@@ -3,6 +3,7 @@ const userRouter = require('./routers/user');
 const messageRouter = require('./routers/message');
 const homeRouter = require('./routers/home');
 const searchRouter = require('./routers/search');
+const handlemapRouter=require('./routers/handlemap')
 module.exports = app => {
   const { router, controller } = app;
   router.get('/', controller.home.index);
@@ -10,4 +11,5 @@ module.exports = app => {
   messageRouter(app);
   homeRouter(app);
   searchRouter(app);
+  handlemapRouter(app);
 };

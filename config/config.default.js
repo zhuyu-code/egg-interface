@@ -48,13 +48,21 @@ config.security = {
   csrf: {
     enable: false,
   },
+  domainWhiteList: [ 'http://localhost:8080' ],
 };
 //配置支持file模式
 exports.multipart = {
   mode: 'stream',
-  fileExtensions:[".xlsx",".xls",".dmg"]//配置扩展名白名单
+  fileExtensions:[".xlsx",".xls",".dmg",".map"]//配置扩展名白名单
 };
 
+//配置表单字段大小
+exports = {
+  bodyParser: {
+    jsonLimit: '1mb',
+    formLimit: '1mb',
+  },
+};
 
   return {
     ...config,

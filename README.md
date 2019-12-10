@@ -123,6 +123,8 @@ readStream.pipe(writeStream)
 9. 流的方式上传单个文件遵守下面两条规则
 ![image](./file.png)
 10. 使用multiply多文件流的形式
+11. this.ctx,this.service,this.ctx.request
+![request](./request.png)
 # 参考文章
 1. [egg项目搭建](https://juejin.im/post/5bf362f0e51d4543850ff46c)
 2. [egg源码解读](https://juejin.im/post/5be92cc95188251fd925d49b)

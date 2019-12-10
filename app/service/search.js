@@ -19,7 +19,7 @@ class SearchService extends Service {
   }
   }
 
-  async makeFile(stream,writeStream,name){
+  async makeFile(stream,writeStream,name,target){
       // 文件和数据库处理
       try {
         await pump(stream,writeStream);//promise执行成功才会执行插入数据库操作。
@@ -50,7 +50,7 @@ class SearchService extends Service {
               const target=path.resolve("./app/public",`${part.filename}`);
               const writeStream=fs.createWriteStream(target);
               await pump(part,writeStream);//将回调函数变成一个内容
-              this.service.search.upload(part.filename,target);
+              this.service.search.upload(path.basename(part.filename,".map"),target);
               this.ctx.body={
                 code:200,
                 message:"插入成功"

@@ -78,7 +78,7 @@ class SearchController extends Controller {
     const name = path.basename(stream.filename);
     const target=path.resolve("./app/public",`${name}`);
     const writeStream=fs.createWriteStream(target);
-    await this.service.search.makeFile(stream,writeStream,name);
+    await this.service.search.makeFile(stream,writeStream,name,target);
    }
 
 
