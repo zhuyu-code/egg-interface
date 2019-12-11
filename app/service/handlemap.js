@@ -12,8 +12,9 @@ class HandlemapService extends Service{
         let rawSourceMap=JSON.parse(file);
 
         const SourceMapConsumer=sourceMap.SourceMapConsumer;
-        
-          const source=SourceMapConsumer.with(rawSourceMap, null,  consumer => {
+
+        const result = await new Promise(resolve => {
+          const source = SourceMapConsumer.with(rawSourceMap, null,  consumer => {
           let origin= consumer.originalPositionFor({
               line: 1,
               column: 985
@@ -21,9 +22,11 @@ class HandlemapService extends Service{
             console.log("------------")
             console.log(origin)
             consumer.destroy();
+            resolve(origin);
           });
-          console.log(source)
-          return "成功";
+        });
+        console.log(result);
+        return result;
     }
 }
 module.exports=HandlemapService
