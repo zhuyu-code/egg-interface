@@ -4,15 +4,15 @@ const sourceMap=require("source-map");
 const Service=require("egg").Service;
 
 class HandlemapService extends Service{
-  async insertError(results,appid,versionid){
+  async insertError(results,versionId){
     const result = await this.app.mysql.insert('error', 
     { 
-      appid:appid,
-      versionid:versionid,
-      filename: results.source,
+      newfilename:results.source,
+      versionId:versionId,
       colno:results.column,
       lineno:results.line,
-      message:results.message
+      message:results.message,
+      createTime:new Date()
     }); 
     // 判断插入成功
     const insertSuccess = result.affectedRows === 1;
@@ -22,20 +22,42 @@ class HandlemapService extends Service{
       return false;
     }
   }
+  //查询versionId
+  async findVersionId(productName,projectName,versionName){
+    const productIds = await this.app.mysql.select("product", {
+      where: { productName: productName },
+      columns: ["productId"]
+    });
+    if (productIds.length == 0) {
+      return "没有注册此产品";
+    }
+    const productId = productIds[0].productId;
+    const projectIds = await this.app.mysql.select("project", {
+      where: { productId: productId, projectName: projectName },
+      columns: ["projectId"]
+    });
+    if (projectIds.length == 0) {
+      return "没有注册此项目";
+    }
+    const projectId = projectIds[0].projectId;
+    const versionIds=await this.app.mysql.select("version",{
+      where:{projectId:projectId,versionName:versionName},
+      columns:["versionId"]
+    })
+    const versionId=versionIds[0].versionId;
+    return versionId;
+  }
     async findmap(){
-      console.log(this.ctx.request.body);
-        let {filename,lineno,colno,message,appid,versionid}=this.ctx.request.body;
-        console.log(appid);
-        const post = await this.app.mysql.get('map', 
+        let {filename,lineno,colno,message,productName,projectName,versionName}=this.ctx.request.body;
+        //通过productName,projectName,versionName找到版本id
+        const versionId=await this.service.handlemap.findVersionId(productName,projectName,versionName);
+        const post = await this.app.mysql.get('file', 
         {
-          appid:appid,
-          versionid:versionid,
-          filename:filename
+          versionId:versionId,
+          fileName:filename
         });
-        console.log(post);
-        let file=fs.readFileSync(post.path);
+        let file=fs.readFileSync(post.sourceMap);
         let rawSourceMap=JSON.parse(file);
-
         const SourceMapConsumer=sourceMap.SourceMapConsumer;
 
         const result = await new Promise(resolve => {
@@ -44,19 +66,19 @@ class HandlemapService extends Service{
               line: lineno,
               column: colno
             })
-            console.log("进入打印了------------")
-            console.log(origin)
             consumer.destroy();
             resolve(origin);
           });
         });
-        console.log(result);
+     
         result.message=message;
-       let log=await this.service.handlemap.insertError(result,appid,versionid);
+        console.log(result);
+        //将结果放入数据库error表中存储起来
+       let log=await this.service.handlemap.insertError(result,versionId );
        if(log){
         return result
        }
-        return {message:"错误"};
+        return {message:"插入错误"};
     }
 }
 module.exports=HandlemapService

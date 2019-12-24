@@ -28,10 +28,11 @@ class SearchService extends Service {
       return "没有注册此项目";
     }
     const projectId = projectIds[0].projectId;
+
     const isExistVersionName = await this.app.mysql.get("version", {
-      versionName: versionName
+      versionName: versionName,
+      projectId:projectId
     });
-    console.log("版本");
     console.log(isExistVersionName);
     if (isExistVersionName) {
       return `${versionName}已经上传了sourcemap文件了`;
@@ -45,12 +46,20 @@ class SearchService extends Service {
           versionName: versionName,
           versionDesc
         });
+       const versionIds=await conn.select("version",{
+         where:{ 
+           versionName: versionName,
+          projectId:projectId},
+          columns:["versionId"]
+       })
+       console.log(versionIds);
+       const versionId=versionIds[0].versionId;
         // 操作2
         const tasks = Object.keys(obj).map(key => {
           return conn.insert("file", {
             fileName: key,
             sourceMap: obj[key],
-            versionName: versionName
+            versionId: versionId
           });
         });
         await Promise.all(tasks);
@@ -113,10 +122,6 @@ class SearchService extends Service {
           const writeStream = fs.createWriteStream(target);
           await pump(part, writeStream); //将回调函数变成一个promise,
           obj[path.basename(part.filename, ".map")] = target;
-          // this.ctx.body={
-          //   code:200,
-          //   message:message
-          // }
         } catch (err) {
           // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
           await sendToWormhole(part);
