@@ -9,7 +9,12 @@ class ShowController extends Controller{
    * @acess 允许访问
    */
     async findProductAll(){
-        this.ctx.body=await this.service.product.findProductAll(); 
+        const data=await this.service.product.findProductAll(); 
+        this.ctx.body={
+          code:200,
+          message:"查询成功",
+          data:data
+        }
     }
  /**
    * @router  POST/product
