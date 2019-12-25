@@ -2,5 +2,5 @@
 
 module.exports = app => {
   const { router, controller } = app;
-  router.get('/errorList', controller.home.findHot);
+  router.get('/version', controller.version.findVersionAll);
 };

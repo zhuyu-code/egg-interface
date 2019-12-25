@@ -1,16 +1,18 @@
 'use strict';
 const userRouter = require('./routers/user');
 
-const homeRouter = require('./routers/home');
+const errorRouter = require('./routers/error');
 const searchRouter = require('./routers/search');
 const handlemapRouter=require('./routers/handlemap');
-const showRouter=require('./routers/show');
+const productRouter=require('./routers/product');
+const versionRouter=require('./routers/version');
+const projectRouter=require('./routers/project');
 module.exports = app => {
-  const { router, controller } = app;
-  router.get('/', controller.home.index);
   userRouter(app);
-  homeRouter(app);
+  errorRouter(app);
   searchRouter(app);
   handlemapRouter(app);
-  showRouter(app);
+  productRouter(app);
+  versionRouter(app);
+  projectRouter(app);
 };
