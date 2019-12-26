@@ -28,12 +28,12 @@ class SearchController extends Controller {
       code:200,
       message:result
     };
-    }catch{
+    } catch{
       ctx.body={
         code:404,
         message:"上传文件失败"
       }
-    } 
+    }
     finally {
       // 需要删除临时文件
       await fs.unlink(file.filepath);

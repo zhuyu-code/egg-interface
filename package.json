@@ -16,6 +16,7 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
+    "@campus/eslint-config-campus": "^1.1.9",
     "autod": "^3.0.1",
     "autod-egg": "^1.1.0",
     "egg-bin": "^4.11.0",
