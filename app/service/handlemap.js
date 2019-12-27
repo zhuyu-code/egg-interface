@@ -24,21 +24,27 @@ class HandlemapService extends Service {
   }
   // 查询versionId
   async findVersionId(projectId, versionName) {
-    console.log("进入函数");
-    console.log(projectId);
-    console.log(versionName)
     const versionIds = await this.app.mysql.select('version', {
       where: { projectId, versionName },
       columns: [ 'versionId' ],
     });
-    const versionId = versionIds[0].versionId;
-    return versionId;
+    console.log(versionIds.length);
+    if(versionIds.length!==0){
+      const versionId = versionIds[0].versionId;
+      return versionId;
+    }else{
+      return {error:"没有发现指定的version"}
+    }
+
+
   }
   async findmap() {
     const { filename, lineno, colno, message, projectId, versionName } = this.ctx.request.body;
-    console.log("findmap函数"+projectId+versionName);
     // 通过projectId,versionName找到版本id
     const versionId = await this.service.handlemap.findVersionId(projectId, versionName);
+    if(versionId.error){
+      return { message: '没有找到相应的版本' };
+    }
     const post = await this.app.mysql.get('file',
       {
         versionId,

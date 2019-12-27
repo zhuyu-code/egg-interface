@@ -1,7 +1,7 @@
 'use strict';
 
 const Service = require('egg').Service;
-
+const uuidv1 = require('uuid/v1');
 class ProjectService extends Service {
   // 查询所有的项目信息
   async findProjectAll() {
@@ -14,8 +14,7 @@ class ProjectService extends Service {
   // 增加一个项目信息
   async addProject() {
     const productId = this.ctx.params.productId;
-    console.log(productId);
-    const { projectName, projectApp, projectDesc } = this.ctx.request.body;
+    const { projectName, projectApp, projectDesc,projectGroup } = this.ctx.request.body;
     console.log(projectName);
     if (!projectName) {
       return '项目名不能为空';
@@ -29,11 +28,18 @@ class ProjectService extends Service {
     if (selectProjectName.length !== 0) {
       return '此产品已经有和你一样的项目名存在了';
     }
+    const projectId=uuidv1();
+    const createTime=new Date();
+    const updateTime=new Date();
     const insertProject = await this.app.mysql.insert('project', {
       projectName,
       projectDesc,
       productId,
       projectApp,
+      projectGroup,
+      projectId,
+      createTime,
+      updateTime
     });
     console.log(insertProject);
     if (insertProject.affectedRows === 1) {
@@ -42,9 +48,10 @@ class ProjectService extends Service {
     return '添加项目失败';
 
   }
+  //更新产品信息
   async updateProject() {
-    const { productId, projectId } = this.ctx.params;
-    const { projectName, projectApp, projectDesc } = this.ctx.request.body;
+    const { projectId } = this.ctx.params;
+    const { projectName, projectApp, projectDesc,productId } = this.ctx.request.body;
     if (!projectName) {
       return '项目名不能修改为空';
     }
@@ -76,7 +83,7 @@ class ProjectService extends Service {
     return '更新失败';
 
   }
-
+    //根据指定projectId删除指定项目。
   async deleteProject() {
     const projectId = this.ctx.params.projectId;
     const result = await this.app.mysql.delete('project', {
@@ -86,7 +93,7 @@ class ProjectService extends Service {
       return '删除成功';
     }
     return '删除失败，请检查上传的projectId';
-
   }
+
 }
 module.exports = ProjectService;

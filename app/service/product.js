@@ -1,7 +1,7 @@
 'use strict';
 
 const Service = require('egg').Service;
-
+const uuidv1 = require('uuid/v1');
 class showService extends Service {
   /* 查询所有的产品信息 */
   async findProductAll() {
@@ -11,7 +11,7 @@ class showService extends Service {
 
   /* 增加产品信息*/
   async addProduct() {
-    const { productName, productDesc, productCategory } = this.ctx.request.body;
+    const { productName, productDesc, productCategory,createPerson } = this.ctx.request.body;
 
     // 防止产品名为空
     if (!productName) {
@@ -31,10 +31,20 @@ class showService extends Service {
       };
     }
     // 将前端的产品信息插入到product表中
+    //生成32位uuid的Id
+  const productId=uuidv1();
+  const createTime=new Date();
+  const updateTime=new Date();
+  const createPersonId=uuidv1();
     const insertProduct = await this.app.mysql.insert('product', {
       productName,
       productDesc,
       productCategory,
+      createPerson,
+      productId,
+      createTime,
+      updateTime,
+      createPersonId
     });
     // 判断是否插入成功
     if (insertProduct.affectedRows === 1) {
@@ -52,7 +62,7 @@ class showService extends Service {
   /* 更新产品信息 */
   async updateProduct() {
     const productId = this.ctx.params.productId;
-    const { productName, productDesc, productCategory } = this.ctx.request.body;
+    const { productName, productDesc, productCategory} = this.ctx.request.body;
     console.log(productName, productDesc, productCategory);
     // 首先查询产品名是否存在，如果存在就不能修改
     const selectProduct = await this.app.mysql.get('product', {
@@ -64,10 +74,12 @@ class showService extends Service {
         message: '你上传产品名和已有的重复，请重新修改',
       };
     }
+    const updateTime=new Date();
     const row = {
       productName,
       productDesc,
       productCategory,
+      updateTime
     };
     const options = {
       where: {

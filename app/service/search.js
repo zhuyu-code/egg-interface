@@ -16,12 +16,10 @@ class SearchService extends Service {
       versionName,
       projectId,
     });
-    console.log(isExistVersionName);
+
     if (isExistVersionName) {
       return `${versionName}已经上传了sourcemap文件了`;
     }
-    console.log("自动注册事务");
-    console.log(projectId);
     // 注册自动事务
     const resultTran = await this.app.mysql.beginTransactionScope(
       async conn => {
@@ -45,6 +43,7 @@ class SearchService extends Service {
             fileName: key,
             sourceMap: obj[key],
             versionId,
+            createTime:new Date()
           });
         });
         await Promise.all(tasks);
@@ -114,7 +113,6 @@ class SearchService extends Service {
         }
       }
     }
-    console.log(obj);
     const message = await this.service.search.findCascade(
       projectId,
       versionName,

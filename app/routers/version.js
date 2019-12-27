@@ -2,5 +2,5 @@
 
 module.exports = app => {
   const { router, controller } = app;
-  router.get('/product/:productId/project/:projectId/version', controller.version.findVersionAll);
+  router.get('/product/project/:projectId/version', controller.version.findVersionAll);
 };
