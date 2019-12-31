@@ -1,3 +1,6 @@
 // {
-//   "extends": ["eslint-config-egg", "@campus/eslint-config-campus/js"]
+//   "extends": ["@campus/eslint-config-campus/js"],
+//   "parserOptions": {
+//     "ecmaVersion": 6
+//  }
 // }

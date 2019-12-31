@@ -2,6 +2,7 @@
 
 const Service = require('egg').Service;
 const uuidv1 = require('uuid/v1');
+const Status=require('../util/httpStatus')
 class showService extends Service {
   /* 查询所有的产品信息 */
   async findProductAll() {
@@ -10,13 +11,12 @@ class showService extends Service {
   }
 
   /* 增加产品信息*/
-  async addProduct() {
-    const { productName, productDesc, productCategory,createPerson } = this.ctx.request.body;
+  async addProduct(productName, productDesc, productCategory,createPerson) {
 
     // 防止产品名为空
     if (!productName) {
       return {
-        code: 400,
+        code: Status.addError,
         message: '产品名不能为空',
       };
     }
@@ -26,7 +26,7 @@ class showService extends Service {
     });
     if (selectProductName) {
       return {
-        code: 400,
+        code: Status.addError,
         message: '已经有相同的产品名',
       };
     }
@@ -60,17 +60,15 @@ class showService extends Service {
 
   }
   /* 更新产品信息 */
-  async updateProduct() {
-    const productId = this.ctx.params.productId;
-    const { productName, productDesc, productCategory} = this.ctx.request.body;
-    console.log(productName, productDesc, productCategory);
+  async updateProduct(productId,productName, productDesc, productCategory) {
+
     // 首先查询产品名是否存在，如果存在就不能修改
     const selectProduct = await this.app.mysql.get('product', {
       productName,
     });
     if (selectProduct) {
       return {
-        code: 400,
+        code: Status.updateError,
         message: '你上传产品名和已有的重复，请重新修改',
       };
     }
@@ -89,32 +87,29 @@ class showService extends Service {
     const result = await this.app.mysql.update('product', row, options);
     if (result.affectedRows === 1) {
       return {
-        code: 200,
+        code: Status.updateSuccess,
         message: '更新成功',
       };
     }
     return {
-      code: 400,
+      code: Status.updateError,
       message: '更新失败',
     };
 
   }
 
-  async deleteProduct() {
-    const productId = this.ctx.params.productId;
-
+  async deleteProduct(productId) {
     const result = await this.app.mysql.delete('product', {
       productId,
     });
-    console.log(result);
     if (result.affectedRows === 1) {
       return {
-        code: 200,
+        code: Status.deleteSuccess,
         message: '删除成功',
       };
     }
     return {
-      code: 400,
+      code: Status.deleteError,
       message: '删除失败',
     };
 

@@ -3,10 +3,11 @@
 const Service = require('egg').Service;
 
 class ErrorService extends Service {
-  async findAllError() {
-    const { versionId } = this.ctx.request.body;
+  async findAllError(versionId) {
     const selectError = await this.app.mysql.select('error', {
-      versionId,
+      where:{
+        versionId
+      },
     });
     return selectError;
   }
