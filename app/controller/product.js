@@ -1,7 +1,8 @@
 'use strict';
 
 const Controller=require('egg').Controller;
-const Status=require('../util/httpStatus')
+const Status=require('../util/httpStatus');
+const moment=require('moment');
 class ShowController extends Controller{
      /**
    * @router GET /product
@@ -9,7 +10,8 @@ class ShowController extends Controller{
    * @acess 允许访问
    */
     async findProductAll(){
-        const data=await this.service.product.findProductAll();
+     const {page,pageSize}=this.ctx.query;
+        const data=await this.service.product.findProductAll(page,pageSize);
         this.ctx.body={
           code:Status.selectSuccess,
           message:"查询成功",
@@ -17,6 +19,24 @@ class ShowController extends Controller{
         }
         this.ctx.status=200;
     }
+
+
+       /**
+   * @router GET /product/search
+   * @desc: 模糊查询产品
+   * @acess 允许访问
+   */
+    async findProductSearch(){
+      const {target,page,pageSize}=this.ctx.query;
+      console.log(target,page,pageSize);
+      const data=await this.service.product.findProductSearch(target,page,pageSize);
+      this.ctx.body={
+        code:Status.selectSuccess,
+        message:"查询成功",
+        data:data
+      }
+    }
+
  /**
    * @router  POST/product
    * @desc: 这是添加产品信息
@@ -32,7 +52,9 @@ class ShowController extends Controller{
         createPerson:'string'
       }
         this.ctx.validate(validateRules);
+        console.log(this.ctx.body)
         this.ctx.body=await this.service.product.addProduct(productName, productDesc, productCategory,createPerson);
+        console.log(this.ctx.body)
         this.ctx.status=201;
     }
  /**
@@ -44,13 +66,14 @@ class ShowController extends Controller{
       const productId = this.ctx.params.productId;
       this.ctx.validate({productId:'string'},this.ctx.params)
       const { productName, productDesc, productCategory} = this.ctx.request.body;
+      console.log(productId,productName,productDesc,productCategory)
       this.ctx.validate({
         productName:'string',
         productDesc:'string',
         productCategory:'string'
       })
-        this.ctx.body=await this.service.product.updateProduct(productId,productName, productDesc, productCategory);
-        this.ctx.status=204
+       this.ctx.body=await this.service.product.updateProduct(productId,productName, productDesc, productCategory);
+        this.ctx.status=200
     }
 
 

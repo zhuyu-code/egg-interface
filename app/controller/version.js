@@ -5,7 +5,8 @@ const Status=require('../util/httpStatus')
 class VersionController extends Controller {
   async findVersionAll() {
     const projectId = this.ctx.params.projectId;
-    const data= await this.service.version.findVersionAll(projectId);
+    const {page,pageSize}=this.ctx.query;
+    const data= await this.service.version.findVersionAll(projectId,page,pageSize);
     this.ctx.body={
       code:Status.selectSuccess,
       message:"查询版本成功",

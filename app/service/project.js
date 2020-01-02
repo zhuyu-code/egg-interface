@@ -5,16 +5,39 @@ const uuidv1 = require('uuid/v1');
 const Status=require('../util/httpStatus')
 class ProjectService extends Service {
   // 查询所有的项目信息
-  async findProjectAll(productId) {
-    const projectList = this.app.mysql.select('project', {
+  async findProjectAll(productId,page,pageSize) {
+    const limitSize=parseInt(pageSize);
+    const offsetSize=(parseInt(page)-1)*pageSize;
+    const projectList =await this.app.mysql.select('project', {
       where: { productId },
+      orders:[['updateTime','desc']],
+      limit:limitSize,
+      offset:offsetSize
     });
-    return projectList;
+    const selectProjectAll=await this.app.mysql.select('project');
+    const length=selectProjectAll.length;
+    return {
+      list:projectList,
+      total:length
+    };
   }
+  // 模糊查询产品信息
+  async findProjectSearch(productId,target,page,pageSize){
+    const selectProjectSearch=await this.app.mysql.query(`select * from project
+    where productId=? AND projectName like '%${target}%'`,[productId]);
+    const length=selectProjectSearch.length;
+    const content=await this.app.mysql.query(`select * from project where productId=? AND projectName
+     like '%${target}%' ORDER BY 'updateTime' Desc LIMIT ${page-1},${pageSize}`,[productId]);
+    return {
+      list:content,
+      total:length
+    };
+  }
+
+
   // 增加一个项目信息
   async addProject(productId,projectName, projectApp, projectDesc) {
 
-    console.log(projectName);
     if (!projectName) {
       return {
         code:Status.addError,
@@ -68,6 +91,7 @@ class ProjectService extends Service {
         message:'项目名不能修改为空'
       };
     }
+    console.log(productId);
     // 查询指定产品里面是否项目名重复
     const selectProject = await this.app.mysql.select('project', {
       where: {
@@ -75,6 +99,8 @@ class ProjectService extends Service {
         projectName,
       },
     });
+    console.log("内容")
+    console.log(selectProject);
     if (selectProject.length !== 0) {
       return {
         code:Status.updateError,
