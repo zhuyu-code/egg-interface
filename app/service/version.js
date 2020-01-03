@@ -9,16 +9,21 @@ class VersionService extends Service {
   async findVersionAll(projectId,page,pageSize) {
     const limitSize=parseInt(pageSize);
     const offsetSize=(parseInt(page)-1)*parseInt(pageSize);
-    const selectVersion = this.app.mysql.select('version', {
+    const selectVersion =await this.app.mysql.select('version', {
       where: {
         projectId,
       },
-      orders:[['versionId','asc']],
+      orders:[['versionId','desc']],
       limit:limitSize,
       offset:offsetSize
     });
-    const selectVersionAll=await this.app.mysql.select('version');
+    const selectVersionAll=await this.app.mysql.select('version',{
+      where:{
+        projectId:projectId
+      }
+    });
     const length=selectVersionAll.length;
+    console.log(selectVersion);
     return {
       list:selectVersion,
       total:length

@@ -33,15 +33,17 @@ async findProjectSearch(){
   this.ctx.status=200;
 }
 
-/**
-* @api {post} /api/User/register 用户注册
-* @apiDescription 用户注册
-* @apiName Register
-* @apiGroup User
-* @apiParam {string} name 用户名
-* @apiParam {string} password 密码
-* @apiVersion 1.0.0
-*/
+async findProjectSort(){
+  const {date}=this.ctx.query;
+  const dateArr=date.split('-');
+  const data=await this.service.project.findProjectSort(dateArr);
+  this.ctx.body= {
+    code:Status.selectSuccess,
+    data:data
+  }
+  this.ctx.status=200;
+}
+
 async addProject(){
   const productId = this.ctx.params.productId;
   const { projectName, projectApp, projectDesc } = this.ctx.request.body;
