@@ -41,23 +41,20 @@ class ProjectService extends Service {
   }
 
   //返回错误列表
-  async findProjectSort(arr){
+  async findProjectSort(arr,projectId){
     console.log(arr);
     const a=arr[0];
     const b=arr[1].replace(/\b(0+)/gi,"")-1;
     const c=arr[2].replace(/\b(0+)/gi,"");
-    console.log(a,b,c)
     const date1=moment(new Date(a,b,c,0)).format("YYYY-MM-DD HH:MM:SS");
     const date2=moment(new Date(a,b,c,23)).format("YYYY-MM-DD HH:MM:SS");
-    console.log(date1);
-    console.log(date2);
     const data=await this.app.mysql.query(`SELECT
     DATE_FORMAT(error.createTime, '%H') Hours,
     COUNT(error.errorId) Count
   FROM
    version INNER JOIN error on version.versionId=error.versionId
   WHERE
-	  version.projectId='e2dcced0-2b93-11ea-8539-a3050da97f91' AND
+	  version.projectId='${projectId}' AND
     error.createTime BETWEEN '${date1}'
   AND '${date2}'
   GROUP BY Hours`)

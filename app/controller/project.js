@@ -34,9 +34,10 @@ async findProjectSearch(){
 }
 
 async findProjectSort(){
+  const {projectId}=this.ctx.params;
   const {date}=this.ctx.query;
   const dateArr=date.split('-');
-  const data=await this.service.project.findProjectSort(dateArr);
+  const data=await this.service.project.findProjectSort(dateArr,projectId);
   this.ctx.body= {
     code:Status.selectSuccess,
     data:data
