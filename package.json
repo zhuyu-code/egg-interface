@@ -13,7 +13,10 @@
     "egg-scripts": "^2.11.0",
     "egg-validate": "^2.0.2",
     "eslint": "^6.7.2",
+    "install": "^0.13.0",
+    "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
+    "npm": "^6.13.4",
     "pump": "^3.0.0",
     "source-map": "^0.7.3",
     "uuid": "^3.3.3"
@@ -24,7 +27,8 @@
     "egg-bin": "^4.11.0",
     "egg-ci": "^1.11.0",
     "egg-mock": "^3.21.0",
-    "eslint-config-egg": "^7.1.0"
+    "eslint-config-egg": "^7.1.0",
+    "utility": "^1.16.3"
   },
   "engines": {
     "node": ">=10.0.0"

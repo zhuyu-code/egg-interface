@@ -10,7 +10,6 @@ class ShowController extends Controller{
    * @acess 允许访问
    */
     async findProductAll(){
-      console.log(this.ctx.path);
      const {userId,page,pageSize}=this.ctx.query;
      console.log(userId);
         const data=await this.service.product.findProductAll(userId,page,pageSize);

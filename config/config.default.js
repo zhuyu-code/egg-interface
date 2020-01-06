@@ -16,7 +16,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1575269908956_2905';
 
   // add your middleware config here
-  config.middleware = ['errorHandler'];
+  config.middleware = ['errorHandler','jwt'];
   config.errorHandler={
     match: '/',
   };
@@ -25,6 +25,10 @@ module.exports = appInfo => {
   const userConfig = {
     // myAppName: 'egg',
   };
+
+  config.jwt = {
+    secret: 'egg-api-jwt',
+};
 
 //配置mysql
 config.mysql = {
