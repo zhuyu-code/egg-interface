@@ -10,8 +10,10 @@ class ShowController extends Controller{
    * @acess 允许访问
    */
     async findProductAll(){
-     const {page,pageSize}=this.ctx.query;
-        const data=await this.service.product.findProductAll(page,pageSize);
+      console.log(this.ctx.path);
+     const {userId,page,pageSize}=this.ctx.query;
+     console.log(userId);
+        const data=await this.service.product.findProductAll(userId,page,pageSize);
         this.ctx.body={
           code:Status.selectSuccess,
           message:"查询成功",
@@ -27,9 +29,9 @@ class ShowController extends Controller{
    * @acess 允许访问
    */
     async findProductSearch(){
-      const {target,page,pageSize}=this.ctx.query;
+      const {userId,target,page,pageSize}=this.ctx.query;
       console.log(target,page,pageSize);
-      const data=await this.service.product.findProductSearch(target,page,pageSize);
+      const data=await this.service.product.findProductSearch(userId,target,page,pageSize);
       this.ctx.body={
         code:Status.selectSuccess,
         message:"查询成功",
@@ -43,18 +45,17 @@ class ShowController extends Controller{
    * @acess 允许访问
    */
     async addProduct(){
-      const { productName, productDesc, productCategory,createPerson } = this.ctx.request.body;
+      const {userId,createPerson}=this.ctx.query;
+      this.ctx.validate({userId:'string',createPerson:'string'},this.ctx.query)
+      const { productName, productDesc, productCategory } = this.ctx.request.body;
       //做校验
       const validateRules={
         productName:'string',
         productDesc:'string',
         productCategory:'string',
-        createPerson:'string'
       }
         this.ctx.validate(validateRules);
-        console.log(this.ctx.body)
-        this.ctx.body=await this.service.product.addProduct(productName, productDesc, productCategory,createPerson);
-        console.log(this.ctx.body)
+        this.ctx.body=await this.service.product.addProduct(userId,productName, productDesc, productCategory,createPerson);
         this.ctx.status=201;
     }
  /**

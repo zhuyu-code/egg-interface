@@ -6,16 +6,23 @@ const Status=require('../util/httpStatus');
 const moment=require('moment');
 class showService extends Service {
   /* 查询所有的产品信息 */
-  async findProductAll(page,pageSize) {
+  async findProductAll(userId,page,pageSize) {
     const limitSize=parseInt(pageSize);
     const offsetSize=(parseInt(page)-1)*pageSize;
     const productList = await this.app.mysql.select('product',
     {
+      where:{
+        userId:userId
+      },
       orders:[['updateTime','desc']],
       limit:limitSize,
       offset:offsetSize
     });
-    const selectAll=await this.app.mysql.select('product');
+    const selectAll=await this.app.mysql.select('product',{
+      where:{
+        userId:userId
+      }
+    });
     const length=selectAll.length;
     return {
       list:productList,
@@ -23,10 +30,10 @@ class showService extends Service {
     };
   }
   /**产品模糊查询接口 */
-  async findProductSearch(target,page,pageSize){
-    const sql=`select * from product where productName like "%${target}%" ORDER BY 'updateTime' DESC LIMIT ${page-1},${pageSize}`;
+  async findProductSearch(userId,target,page,pageSize){
+    const sql=`select * from product where productName like "%${target}%" AND userId='${userId}' ORDER BY 'updateTime' DESC LIMIT ${page-1},${pageSize}`;
     const content= await this.app.mysql.query(sql);
-    const selectAll=await this.app.mysql.query(`select * from product where productName like "%${target}%" ORDER BY 'updateTime' DESC`);
+    const selectAll=await this.app.mysql.query(`select * from product where productName like "%${target}%" AND userId='${userId}' ORDER BY 'updateTime' DESC`);
     const length=selectAll.length;
     return {
       list:content,
@@ -36,8 +43,7 @@ class showService extends Service {
 
 
   /* 增加产品信息*/
-  async addProduct(productName, productDesc, productCategory,createPerson) {
-
+  async addProduct(userId,productName, productDesc, productCategory,createPerson) {
     // 防止产品名为空
     if (!productName) {
       return {
@@ -46,10 +52,14 @@ class showService extends Service {
       };
     }
     // 查询产品名是否重复，因为产品名必须不能一样，做一个检查。
-    const selectProductName = await this.app.mysql.get('product', {
-      productName,
+    const selectProductName = await this.app.mysql.select('product', {
+      where:{
+        userId:userId,
+        productName,
+      }
     });
-    if (selectProductName) {
+    console.log(selectProductName);
+    if (selectProductName.length!==0) {
       return {
         code: Status.addError,
         message: '已经有相同的产品名',
@@ -60,7 +70,6 @@ class showService extends Service {
   const productId=uuidv1();
   const createTime=moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
   const updateTime=moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
-  const createPersonId=uuidv1();
     const insertProduct = await this.app.mysql.insert('product', {
       productName,
       productDesc,
@@ -69,7 +78,7 @@ class showService extends Service {
       productId,
       createTime,
       updateTime,
-      createPersonId
+      userId
     });
     // 判断是否插入成功
     if (insertProduct.affectedRows === 1) {

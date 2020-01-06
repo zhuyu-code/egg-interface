@@ -15,7 +15,6 @@ class ProjectService extends Service {
       limit:limitSize,
       offset:offsetSize
     });
-    console.log(projectList);
     const selectProjectAll=await this.app.mysql.select('project',{
       where:{
         productId:productId
@@ -62,7 +61,7 @@ class ProjectService extends Service {
   }
 
   // 增加一个项目信息
-  async addProject(productId,projectName, projectApp, projectDesc) {
+  async addProject(userId,createPerson,productId,projectName, projectApp, projectDesc) {
 
     if (!projectName) {
       return {
@@ -92,7 +91,9 @@ class ProjectService extends Service {
       projectApp,
       projectId,
       createTime,
-      updateTime
+      updateTime,
+      userId,
+      createPerson
     });
     if (insertProject.affectedRows === 1) {
       return {

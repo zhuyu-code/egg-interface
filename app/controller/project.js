@@ -46,9 +46,10 @@ async findProjectSort(){
 }
 
 async addProject(){
+  const {userId,createPerson}=this.ctx.query;
   const productId = this.ctx.params.productId;
   const { projectName, projectApp, projectDesc } = this.ctx.request.body;
-  this.ctx.body=await this.service.project.addProject(productId,projectName, projectApp, projectDesc);
+  this.ctx.body=await this.service.project.addProject(userId,createPerson,productId,projectName, projectApp, projectDesc);
   this.ctx.status=201;
 }
 

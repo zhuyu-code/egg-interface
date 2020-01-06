@@ -66,7 +66,6 @@ class HandlemapService extends Service {
     });
 
     result.message = message;
-    console.log(result);
     // 将结果放入数据库error表中存储起来
     const log = await this.service.handlemap.insertError(result, versionId);
     if (log) {

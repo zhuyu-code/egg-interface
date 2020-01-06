@@ -23,7 +23,6 @@ class VersionService extends Service {
       }
     });
     const length=selectVersionAll.length;
-    console.log(selectVersion);
     return {
       list:selectVersion,
       total:length

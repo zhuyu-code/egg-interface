@@ -28,6 +28,7 @@ class SearchService extends Service {
           projectId,
           versionName,
           versionDesc,
+          createTime:new Date()
         });
         const versionIds = await conn.select('version', {
           where: {
@@ -35,7 +36,6 @@ class SearchService extends Service {
             projectId },
           columns: [ 'versionId' ],
         });
-        console.log(versionIds);
         const versionId = versionIds[0].versionId;
         // 操作2
         const tasks = Object.keys(obj).map(key => {
