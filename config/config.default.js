@@ -28,7 +28,8 @@ module.exports = appInfo => {
 
   config.jwt = {
     secret: 'egg-api-jwt',
-};
+  };
+
 
 //配置mysql
 config.mysql = {
@@ -44,11 +45,13 @@ config.mysql = {
       // 数据库名
       database: 'Test',
   },
+
   // 是否加载到 app 上，默认开启
   app: true,
   // 是否加载到 agent 上，默认关闭
   agent: false,
 }
+
 
 //配置csrf的跨域攻击
 config.security = {

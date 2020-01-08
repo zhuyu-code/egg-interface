@@ -8,6 +8,7 @@ class UserController extends Controller{
   async register(){
     const {ctx}=this;
     const registerMsg=ctx.request.body;
+    console.log(registerMsg);
     const rule={
       userName:{type:'string',required:true,message:'必填项'},
       password:{type:'string',required:true,message:'必填项'}

@@ -3,12 +3,15 @@
 const Service=require('egg').Service;
 const JWT = require('jsonwebtoken');
 const utility = require("utility")//密码加密
+const uuidv1 = require('uuid/v1');
 
 class UserService extends Service{
   async register(registerMsg){
+    const {userName}=registerMsg;
+    console.log(userName);
     let res={};
     const content=await this.app.mysql.get('user',{
-      username:registerMsg.userName
+      userName:userName
     })
     if(content){
       res.code=-2;
@@ -17,6 +20,7 @@ class UserService extends Service{
       res.status='error'
     }else{
       registerMsg.password=utility.md5(registerMsg.password);
+      registerMsg.userId=uuidv1();
       const result=await this.app.mysql.insert('user',registerMsg);
       if(result.affectedRows===1){
           res.code=1;
@@ -33,7 +37,6 @@ class UserService extends Service{
     return res;
   }
   async login(loginMsg) {
-    const { ctx } = this;
     const res = {};
     // 在当前数据库中验证此用户思否存在
     const queryResult = await this.app.mysql.get('user',{
@@ -46,7 +49,6 @@ class UserService extends Service{
       res.status = 'failed';
     } else {
       const result = await this.app.mysql.get('user',loginMsg);
-      console.log('result'+result);
       if (!result) {
         res.code = -1;
         res.msg = '用户信息不正确';
@@ -58,12 +60,13 @@ class UserService extends Service{
           userName: result.userName,
         },
         this.config.jwt.secret, {
-          expiresIn: 60 * 60,
+          expiresIn: 600 * 600,
         });
         res.data = result.userName;
         res.code = 1;
         res.token = token;
-        res.status = 'ok';
+        res.data=result;
+        res.message = '登录成功';
       }
     }
     return res;

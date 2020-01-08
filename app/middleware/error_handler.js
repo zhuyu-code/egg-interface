@@ -17,6 +17,9 @@ module.exports = () => {
       if (status === 422) {
         ctx.body.detail = err.errors;
       }
+      if (status === 401) {
+        ctx.body.detail = "权限失败";
+      }
       ctx.status = status;
     }
   };
