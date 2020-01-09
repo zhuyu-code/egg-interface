@@ -6,7 +6,8 @@ module.exports = (options,app) => {
     const token = ctx.request.headers.authorization;
     const method = ctx.method.toLowerCase();
      if (!token) {
-      if (ctx.path === '/register' || ctx.path === '/login') {
+       console.log(ctx);
+      if (ctx.path === '/register' || ctx.path === '/login'||ctx.request.url==='/fileuploadsStreams'||ctx.request.url==='/handlemap') {
         // before in
         await next();
         //after

@@ -58,7 +58,7 @@ config.security = {
   csrf: {
     enable: false,
   },
-  domainWhiteList: [ 'http://localhost:8080','http://localhost:3000','http://122.51.175.158' ],
+  domainWhiteList: [ 'http://localhost:8080','http://localhost:3000','http://122.51.175.158','http://127.0.0.1:8080' ],
 };
 //配置支持file模式
 exports.multipart = {
