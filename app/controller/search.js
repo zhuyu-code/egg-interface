@@ -28,7 +28,7 @@ class SearchController extends Controller {
       code:200,
       message:result
     };
-    } catch{
+    } catch(error){
       ctx.body={
         code:404,
         message:"上传文件失败"

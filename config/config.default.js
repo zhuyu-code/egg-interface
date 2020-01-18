@@ -35,13 +35,13 @@ module.exports = appInfo => {
 config.mysql = {
   client: {
       // host
-      host: '122.51.175.158',
+      host: '127.0.0.1',
       // 端口号
       port: '3306',
       // 用户名
       user: 'root',
       // 密码
-      password: '123456',
+      password: '128038zy',
       // 数据库名
       database: 'Test',
   },
@@ -58,7 +58,7 @@ config.security = {
   csrf: {
     enable: false,
   },
-  domainWhiteList: [ 'http://localhost:8080','http://localhost:3000','http://122.51.175.158','http://127.0.0.1:8080' ],
+  domainWhiteList: [ '*' ],
 };
 //配置支持file模式
 exports.multipart = {

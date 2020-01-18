@@ -4,6 +4,11 @@ const Controller=require('egg').Controller;
 const Status=require('../util/httpStatus')
 
 class ProjectController extends Controller{
+
+  async findProjectOne(){
+    const projectId=this.ctx.params.projectId
+    this.ctx.body=await this.service.project.findProjectOne(projectId);
+  }
     /**
    * @router  GET/project
    * @desc: 这是获取全部项目
@@ -48,16 +53,16 @@ async findProjectSort(){
 async addProject(){
   const {userId,createPerson}=this.ctx.query;
   const productId = this.ctx.params.productId;
-  const { projectName, projectApp, projectDesc } = this.ctx.request.body;
-  this.ctx.body=await this.service.project.addProject(userId,createPerson,productId,projectName, projectApp, projectDesc);
+  const { projectName, projectColor,projectApp, projectDesc } = this.ctx.request.body;
+  this.ctx.body=await this.service.project.addProject(userId,createPerson,productId,projectName,projectColor, projectApp, projectDesc);
   this.ctx.status=201;
 }
 
 
 async updateProject(){
   const { projectId } = this.ctx.params;
-  const { projectName, projectApp, projectDesc,productId } = this.ctx.request.body;
-    this.ctx.body=await this.service.project.updateProject(projectId,projectName, projectApp, projectDesc,productId);
+  const { projectName, projectColor, projectApp, projectDesc,productId } = this.ctx.request.body;
+    this.ctx.body=await this.service.project.updateProject(projectId,projectName,projectColor, projectApp, projectDesc,productId);
     this.ctx.status=200
 }
 

@@ -5,6 +5,24 @@ const uuidv1 = require('uuid/v1');
 const Status=require('../util/httpStatus');
 const moment=require('moment');
 class ProjectService extends Service {
+  //查询指定项目id的项目信息
+  async findProjectOne(projectId){
+    const projectObj=await this.app.mysql.get("project",{projectId:projectId})
+    if(projectObj){
+      return {
+        code:600,
+        data:projectObj,
+        message:"查询成功"
+      }
+    }else{
+      return {
+        code:601,
+        data:"",
+        message:"查询失败"
+      }
+    }
+
+  }
   // 查询所有的项目信息
   async findProjectAll(productId,page,pageSize) {
     const limitSize=parseInt(pageSize);
@@ -32,7 +50,7 @@ class ProjectService extends Service {
     where productId=? AND projectName like '%${target}%'`,[productId]);
     const length=selectProjectSearch.length;
     const content=await this.app.mysql.query(`select * from project where productId=? AND projectName
-     like '%${target}%' ORDER BY 'updateTime' Desc LIMIT ${page-1},${pageSize}`,[productId]);
+     like '%${target}%' ORDER BY updateTime Desc LIMIT ${page-1},${pageSize}`,[productId]);
     return {
       list:content,
       total:length
@@ -41,7 +59,6 @@ class ProjectService extends Service {
 
   //返回错误列表
   async findProjectSort(arr,projectId){
-    console.log(arr);
     const a=arr[0];
     const b=arr[1].replace(/\b(0+)/gi,"")-1;
     const c=arr[2].replace(/\b(0+)/gi,"");
@@ -61,7 +78,7 @@ class ProjectService extends Service {
   }
 
   // 增加一个项目信息
-  async addProject(userId,createPerson,productId,projectName, projectApp, projectDesc) {
+  async addProject(userId,createPerson,productId,projectName,projectColor, projectApp, projectDesc) {
 
     if (!projectName) {
       return {
@@ -86,6 +103,7 @@ class ProjectService extends Service {
     const updateTime=new Date();
     const insertProject = await this.app.mysql.insert('project', {
       projectName,
+      projectColor,
       projectDesc,
       productId,
       projectApp,
@@ -110,7 +128,7 @@ class ProjectService extends Service {
 
   }
   //更新产品信息
-  async updateProject(projectId,projectName, projectApp, projectDesc,productId) {
+  async updateProject(projectId,projectName,projectColor, projectApp, projectDesc,productId) {
 
     if (!projectName) {
       return {
@@ -118,8 +136,6 @@ class ProjectService extends Service {
         message:'项目名不能修改为空'
       };
     }
-    console.log(productId);
-    console.log(projectName);
     // 查询指定产品里面是否项目名重复
     const selectProject = await this.app.mysql.select('project', {
       where: {
@@ -127,8 +143,6 @@ class ProjectService extends Service {
         projectName,
       },
     });
-    console.log("内容")
-    console.log(selectProject);
     if (selectProject.length !== 0) {
       return {
         code:Status.updateError,
@@ -138,6 +152,7 @@ class ProjectService extends Service {
     // 根据信息修改project表;
     const row = {
       projectName,
+      projectColor,
       projectApp,
       projectDesc,
     };

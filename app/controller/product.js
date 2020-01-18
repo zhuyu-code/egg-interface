@@ -11,8 +11,6 @@ class ShowController extends Controller{
    */
     async findProductAll(){
      const {userId,page,pageSize}=this.ctx.query;
-     console.log('打印-----————————————————————————————————-')
-     console.log(userId);
         const data=await this.service.product.findProductAll(userId,page,pageSize);
         this.ctx.body={
           code:Status.selectSuccess,

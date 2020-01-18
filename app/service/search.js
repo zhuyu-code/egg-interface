@@ -29,6 +29,7 @@ class SearchService extends Service {
           versionName,
           versionDesc,
           createTime:new Date()
+
         });
         const versionIds = await conn.select('version', {
           where: {

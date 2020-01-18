@@ -31,9 +31,9 @@ class showService extends Service {
   }
   /**产品模糊查询接口 */
   async findProductSearch(userId,target,page,pageSize){
-    const sql=`select * from product where productName like "%${target}%" AND userId='${userId}' ORDER BY 'updateTime' DESC LIMIT ${page-1},${pageSize}`;
+    const sql=`select * from product where productName like "%${target}%" AND userId='${userId}' ORDER BY updateTime DESC LIMIT ${page-1},${pageSize}`;
     const content= await this.app.mysql.query(sql);
-    const selectAll=await this.app.mysql.query(`select * from product where productName like "%${target}%" AND userId='${userId}' ORDER BY 'updateTime' DESC`);
+    const selectAll=await this.app.mysql.query(`select * from product where productName like "%${target}%" AND userId='${userId}' ORDER BY updateTime DESC`);
     const length=selectAll.length;
     return {
       list:content,
