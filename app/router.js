@@ -6,7 +6,8 @@ const handlemapRouter=require('./routers/handlemap');
 const productRouter=require('./routers/product');
 const versionRouter=require('./routers/version');
 const projectRouter=require('./routers/project');
-const userRouter=require('./routers/user')
+const userRouter=require('./routers/user');
+const editorRouter=require('./routers/editor');
 module.exports = app => {
   errorRouter(app);
   searchRouter(app);
@@ -14,5 +15,6 @@ module.exports = app => {
   productRouter(app);
   versionRouter(app);
   projectRouter(app);
-  userRouter(app)
+  userRouter(app);
+  editorRouter(app)
 };

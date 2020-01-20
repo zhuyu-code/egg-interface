@@ -18,7 +18,11 @@ module.exports = (options,app) => {
       let decode;
       try {
         // 验证当前token
-        decode = JWT.verify(token, options.secret);
+        try {
+          decode = JWT.verify(token, options.secret);
+        } catch (error) {
+          ctx.throw(401,"无效的权限")
+        }
         if (!decode || !decode.userName) {
           ctx.throw(401, '没有权限，请登录');
         }
@@ -29,12 +33,14 @@ module.exports = (options,app) => {
         const user = await app.mysql.get('user',{
           userName: decode.userName,
         });
+        console.log(user);
         if (user) {
           await next();
         } else {
           ctx.throw(401, '用户信息验证失败');
         }
       } catch (e) {
+        console.log("响应")
         console.log(ctx.response);
       }
     }
