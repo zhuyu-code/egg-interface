@@ -4,11 +4,11 @@ class EditorController extends Controller{
 
   async findEditorAll(){
     const {projectId}=this.ctx.params;
-    const target=await this.service.editor.findEditorAll(projectId);
+    const git target=await this.service.editor.findEditorAll(projectId);
     if(target[0].editor){
       this.ctx.body= {
         code:600,
-        message:"查询成功",
+        message:"查询成功////",
         data:target
       }
     }else{
