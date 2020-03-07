@@ -4,7 +4,7 @@ class EditorController extends Controller{
 
   async findEditorAll(){
     const {projectId}=this.ctx.params;
-    const git target=await this.service.editor.findEditorAll(projectId);
+    const target=await this.service.editor.findEditorAll(projectId);
     if(target[0].editor){
       this.ctx.body= {
         code:600,
